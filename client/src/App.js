@@ -30,12 +30,18 @@ function App() {
     setTodoItems([...todoItems, newItem]);
   };
 
+  const deleteItem=(targetItem)=>{
+    const newTodoItems = todoItems.filter((e)=>e.id !== targetItem.id);
+    setTodoItems(newTodoItems);
+  }
+
   return (
     <div className="App">
+      <h2>TODO LIST</h2>
       <AddTodo addItem={addItem} />
       {todoItems.map((item) => {
         // console.log('item >>>>> ', item); // {id: 1, title: 'my todo1', done: false}
-        return <Todo key={item.id} item={item} />;
+        return <Todo key={item.id} item={item} deleteItem={deleteItem}/>;
       })}
     </div>
   );
