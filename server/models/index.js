@@ -1,43 +1,22 @@
 'use strict';
+// JS의 엄격모드(strict mode) 활성화.
+// - 잠재적인 오류를 방지하고 더 안전한 코드를 작성하도록 도와줌.
 
-const fs = require('fs');
-const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.json')['development'];
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
-
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config,
+);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.Todo = require('./Todo')(sequelize, Sequelize);
+// models/Todo.js에서 정의한 model이 db.Visitor에 들어감.
+// db = {"sequelize" : sequelize, "Sequelize": Sequelize, "Todo" : XXX}
 module.exports = db;
