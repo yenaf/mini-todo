@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/Todo.scss';
 
-export default function Todo({ item, deleteItem }) {
+export default function Todo({ item, deleteItem,updateItem }) {
   console.log('item >>>>> ', item); // {id: 1, title: 'my todo1', done: false}
 
   const [todoItem, setTodoItem] = useState(item);
@@ -20,6 +20,7 @@ export default function Todo({ item, deleteItem }) {
   const enterKeyEventHandler = (e) => {
     if (e.key === 'Enter') {
       setReadOnly(true);
+      updateItem(todoItem)//수정 1 - 엔터누르면 저장
     }
   };
 
@@ -36,14 +37,18 @@ export default function Todo({ item, deleteItem }) {
 
   // checkbox 업데이트
   const checkboxEventHandler = (e) => {
+    // rest : id,title정보
     const { done, ...rest } = todoItem;
 
-    setTodoItem({
-      done: e.target.checked,
-      ...rest,
-    });
+    const updatedItem = {
+      done:e.target.checked,
+      ...rest
+    }
+    setTodoItem(updatedItem);
+    updateItem(updatedItem);
     console.log('e.target.checked >>>> ', e.target.checked);
   };
+
   return (
     <div className="Todo">
       <input
