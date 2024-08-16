@@ -19,17 +19,18 @@ if(hostname === 'localhost'){
 export const API_BASE_URL = `${backendHost}`;
 
 /**
- * 참고
+ * (참고)
  * window && window.location && window.location.hostname; 하는 이유?
- * 안정성을 높이기 위해서
- 
- * 윈도우가 존재하지 않는 경우
- * ex) 서버측 코드(node.js)에서 실행되는 경우 =  window객체는 존재하지 않음
- 
- * window.location이 존재하지 않는 경우
- * ex) 브라우저 환경이 아닌 경우 = window.location 존재하지 않을 수 있음
- * 
- * 
-
-
+ * - 안정성을 높이기 위해서
+ *
+ *  window가 존재하지 않는 경우
+ * - ex. 서버 측 코드 (node.js)에서 실행되는 경우 = window 객체는 존재하지 않음.
+ *
+ *  window.location이 존재하지 않는 경우
+ * - ex. 브라우저 환경이 아닌 경우 = window.location 존재하지 않을 수 있음.
+ *
+ *  window.location.hostname이 존재하지 않는 경우
+ * - ex. 브라우저 환경이지만 window.location 객체에 hostname 속성이 없는 경우
+ *
+ * 이렇게 단게적으로 확인하면 안전하게 호스트 이름을 가져올 수 있음.
  */

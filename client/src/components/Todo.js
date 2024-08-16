@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import '../styles/Todo.scss';
 
 export default function Todo({ item, deleteItem,updateItem }) {
@@ -7,9 +7,9 @@ export default function Todo({ item, deleteItem,updateItem }) {
   const [todoItem, setTodoItem] = useState(item);
   const [readOnly, setReadOnly] = useState(true);
 
-  const onDeleteButtonClick = () => {
+  const onDeleteButtonClick = useCallback(() => {
     deleteItem(todoItem);
-  };
+  },[deleteItem]);
 
   // title 클릭 시 실행될 함수 : readOnly를 false로 변경
   const offReadOnlyMode = () => {

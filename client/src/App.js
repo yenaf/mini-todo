@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Todo from './components/Todo';
 import AddTodo from './components/AddTodo';
 import axios from 'axios';
@@ -7,7 +7,7 @@ import {API_BASE_URL} from './app-config';
 
 function App() {
   const [todoItems, setTodoItems] = useState([]);
-  
+
   // [env 버전]
   const DB_HOST = process.env.REACT_APP_DB_HOST;
 
@@ -39,7 +39,14 @@ function App() {
   // create API
   const addItem = async(newItem) => {
     const res =  await axios.post(`${DB_HOST}/api/todo`,newItem);
-    setTodoItems([...todoItems, res.data]);
+    // 현재 API 호출 후 응답을 기다리지 않고 바로 상태 업데이트를 진행하면,
+    // 네트워크 지연 등으로 인해 예상치 못한 문제가 발생할 수 있습니다.
+    // 따라서 비동기 작업 처리를 제대로 해주는 것이 좋습니다.
+    if(res.status ===200){
+      setTodoItems([...todoItems, res.data]);
+    }else{
+      console.log('Failed to add item');  
+    }
   };
   // const deleteItem=(targetItem)=>{
   //   const newTodoItems = todoItems.filter((e)=>e.id !== targetItem.id);
@@ -50,6 +57,7 @@ function App() {
   const deleteItem=async(targetItem)=>{
     await axios.delete(`${DB_HOST}/api/todo/${targetItem.id}`);
     const newTodoItems = todoItems.filter((e)=>e.id !== targetItem.id);
+    
     setTodoItems(newTodoItems);
   };
 
@@ -63,10 +71,15 @@ function App() {
     <div className="App">
       <h2>TODO LIST</h2>
       <AddTodo addItem={addItem} />
-      {todoItems.map((item) => {
-        // console.log('item >>>>> ', item); // {id: 1, title: 'my todo1', done: false}
-        return <Todo key={item.id} item={item} deleteItem={deleteItem} updateItem={updateItem}/>;
-      })}
+      <div className='left-todos'> 📑 {todoItems.length} todos</div>
+      {todoItems.length > 0 ? (
+        todoItems.map((item) => {
+          // console.log('item >>>>> ', item); // {id: 1, title: 'my todo1', done: false}
+          return <Todo key={item.id} item={item} deleteItem={deleteItem} updateItem={updateItem}/>;
+        })
+      ):(
+        <p className="empty-todos">Todo를 추가해주세요 🔥</p>
+      )}
     </div>
   );
 }
