@@ -1,58 +1,69 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import '../styles/Todo.scss';
 
-export default function Todo({item, deleteItem}) {
-  console.log('자식컴포넌트',item);//{id: 1, title: 'my todo1', done: false}
+export default function Todo({ item, deleteItem }) {
+  console.log('item >>>>> ', item); // {id: 1, title: 'my todo1', done: false}
 
-  const [todoItem,setTodoItem] = useState(item);
+  const [todoItem, setTodoItem] = useState(item);
   const [readOnly, setReadOnly] = useState(true);
 
-  const onDeleteButtonClick=()=>{
+  const onDeleteButtonClick = () => {
     deleteItem(todoItem);
-  }
+  };
 
-  const offReadOnlyMode = ()=>{
+  // title 클릭 시 실행될 함수 : readOnly를 false로 변경
+  const offReadOnlyMode = () => {
     setReadOnly(false);
-  } //커서는 깜박거리지만 입력은 할수 없다
+  };
 
-  // 엔터키 누르면 readOnly를 true로 변경
-  const enterKeyEventHandler = (e)=>{
-    if(e.key==='Enter'){
+  // readOnly true: enter키 누르면 readOnly를 true로 변경
+  const enterKeyEventHandler = (e) => {
+    if (e.key === 'Enter') {
       setReadOnly(true);
     }
-  }
+  };
 
-  const editEventHandler = (e)=>{
-    const {title,...rest} = todoItem;
+  // 커서가 깜빡인다고 수정 가능한 것은 아님.
+  // 사용자가 키보드 입력할 때마다 item 새 값으로 변경.
+  const editEventHandler = (e) => {
+    // rest: id, done 정보
+    const { title, ...rest } = todoItem;
     setTodoItem({
-      title:e.target.value,
-      ...rest
+      title: e.target.value,
+      ...rest,
     });
-  }
+  };
 
-  const checkboxEventHandler = (e)=>{
-    console.log(e.target.checked);
-    
-    const {done,...rest} = todoItem;
+  // checkbox 업데이트
+  const checkboxEventHandler = (e) => {
+    const { done, ...rest } = todoItem;
+
     setTodoItem({
-      done:e.target.checked,
-      ...rest
-    })
-  }
-  
+      done: e.target.checked,
+      ...rest,
+    });
+    console.log('e.target.checked >>>> ', e.target.checked);
+  };
   return (
-    <div>
-      <input type='checkbox' id={`todo${todoItem.id}`} name={`todo${todoItem.id}`} 
-        value={`todo${todoItem.id}`} 
-        defaultChecked={todoItem.done}
+    <div className="Todo">
+      <input
+        type="checkbox"
+        id={`todo${todoItem.id}`}
+        name={`todo${todoItem.id}`}
+        value={`todo${todoItem.id}`}
+        defaultChecked={todoItem.done} // true, o // false, x
         onChange={checkboxEventHandler}
       />
-      {/* <label htmlFor={`todo${item.id}`}>{item.title}</label> */}
-      <input type='text' value={todoItem.title} readOnly={readOnly} 
+      <input
+        type="text"
+        value={todoItem.title}
+        readOnly={readOnly}
         onClick={offReadOnlyMode}
         onChange={editEventHandler}
         onKeyDown={enterKeyEventHandler}
       />
-      <button onClick={onDeleteButtonClick}>x</button>
+      {/* <label htmlFor="todo0">{item.title}</label> */}
+      <button onClick={onDeleteButtonClick}>DELETE</button>
     </div>
-  )
+  );
 }

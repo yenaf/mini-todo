@@ -1,9 +1,12 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
+const cors = require('cors');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(cors());
 
 const todoRouter = require('./routes/todo');
 app.use('/api', todoRouter); // 기본 주소 : localhost:PORT/api
